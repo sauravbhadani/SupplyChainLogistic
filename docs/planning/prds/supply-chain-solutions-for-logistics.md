@@ -4,10 +4,11 @@ source: https://docs.google.com/document/d/11YaNO_gASCfLaUZnuHKhVybWI2Cj3LBw1N70
 sourceType: google-docs
 importedAt: 2026-07-26
 revisedAt: 2026-07-26
-status: enriched
+status: feasibility-assessed
 linearInitiative: null
 validationReport: docs/planning/prds/supply-chain-solutions-for-logistics-validation.md
 enrichmentReport: docs/planning/prds/supply-chain-solutions-for-logistics-enrichment.md
+feasibilityReport: docs/planning/prds/supply-chain-solutions-for-logistics-feasibility.md
 ---
 
 # Supply chain solutions for logistics
