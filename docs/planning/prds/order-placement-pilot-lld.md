@@ -4,6 +4,10 @@ mode: lld
 generatedAt: 2026-07-26
 groundedIn: src/OrderPilot.Api (all Controllers, Services, Domain/Entities, Authorization), tests/OrderPilot.Api.UnitTests, tests/OrderPilot.Api.IntegrationTests
 alignedWith: docs/planning/prds/order-placement-pilot-architecture.md (APPROVED)
+scopedReruns:
+  - modules: AuthController
+    date: 2026-07-26
+    note: Added the AuthController class diagram missing from Module 2's original run; Module 2's sequence diagram was verified unchanged, not redrawn.
 ---
 
 # Architecture Review: order-placement-pilot
@@ -142,6 +146,38 @@ sequenceDiagram
     TokenService-->>AuthController: (token, expiresAtUtc)
     AuthController-->>Customer: 200 OK LoginResponse{Token, ExpiresAtUtc, Role}
 ```
+
+---
+
+## Module: AuthController (scoped re-run — `modules="AuthController"`)
+
+Grounded in: `src/OrderPilot.Api/Controllers/AuthController.cs`
+
+The earlier run bundled this controller with `TokenService` under "Module 2" and diagrammed the DTOs and the login sequence, but never drew `AuthController` itself as a class — its constructor-injected dependencies and its single action were only implied by the sequence diagram. This scoped re-run adds that missing piece rather than repeating Module 2's sequence diagram, which remains accurate and unchanged (`AuthController.cs` has not been modified since).
+
+### Class diagram — AuthController
+
+```mermaid
+classDiagram
+    class AuthController {
+        -UserManager~ApplicationUser~ _userManager
+        -ITokenService _tokenService
+        +AuthController(UserManager~ApplicationUser~, ITokenService)
+        +Login(LoginRequest) Task~ActionResult~LoginResponse~~
+    }
+    class UserManager~ApplicationUser~ {
+        <<ASP.NET Core Identity>>
+    }
+    class ITokenService {
+        <<interface>>
+    }
+    AuthController --> UserManager~ApplicationUser~ : constructor-injected
+    AuthController --> ITokenService : constructor-injected
+```
+
+Both dependencies are constructor-injected per `AuthController.cs:13-20` — `UserManager<ApplicationUser>` comes from ASP.NET Core Identity's DI registration (`AddAppDataAndIdentity` in `ServiceCollectionExtensions.cs`), `ITokenService` from `AddAppServices` in the same file. `AuthController` has exactly one action, `Login` (`AuthController.cs:22-51`), with no other public surface — there is nothing else to add to this class diagram without inventing structure that isn't in the file.
+
+For the request/response flow through these two dependencies, see Module 2's sequence diagram above — it is not redrawn here since scoping to `AuthController` alone doesn't change what actually happens at runtime, only which class's own shape gets drawn explicitly.
 
 ---
 
