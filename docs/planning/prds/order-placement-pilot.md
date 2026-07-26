@@ -4,6 +4,7 @@ source: docs/planning/prds/supply-chain-solutions-for-logistics-feasibility.md
 sourceType: internal-derived
 parentInitiative: supply-chain-solutions-for-logistics
 importedAt: 2026-07-26
+revisedAt: 2026-07-26
 status: feasibility-assessed
 linearInitiative: null
 validationReport: docs/planning/prds/order-placement-pilot-validation.md
@@ -12,6 +13,8 @@ feasibilityReport: docs/planning/prds/order-placement-pilot-feasibility.md
 ---
 
 # Order Placement Pilot (FR-002 narrow slice)
+
+> **Revision note (2026-07-26):** PP-001's acceptance criteria updated to match the actual implementation in `src/OrderPilot.Api` — this pilot has no supplier-side integration; order status is Admin-managed exclusively. Flagged by the post-implementation implementability check (`order-placement-pilot-validation-implementability-2026-07-26.md`).
 
 > **Origin:** this PRD is a deliberately narrowed slice of `supply-chain-solutions-for-logistics`, carved out by the `/PRDFeasibility` assessment (see "Answering: 4-Week Production Delivery" → "(b) What COULD realistically ship in 4 weeks" in `supply-chain-solutions-for-logistics-feasibility.md`) as the one piece of that PRD's scope that plausibly fits a 4-week window with a 2 BE / 1 FE / 1 QA team. It is explicitly **not** a replacement for the parent PRD — it exists to get something real into production quickly while the parent initiative's open PO decisions and legacy-system discovery proceed in parallel.
 
@@ -35,7 +38,7 @@ The business wants proof, within 4 weeks, that a business customer can place and
 
 | ID | Requirement | Acceptance Criteria |
 |----|-------------|----------------------|
-| PP-001 | A pilot-cohort business customer can create and submit an order of the single supported order type to the single designated supplier | Customer can complete order creation and submission in the web UI without any manual/offline step; order reaches the supplier's fulfillment endpoint |
+| PP-001 | A pilot-cohort business customer can create and submit an order of the single supported order type to the single designated supplier | Customer can complete order creation and submission in the web UI without any manual/offline step; the order is persisted and visible to Admin for fulfillment tracking. **No outbound call to the supplier's systems is made** — this pilot has no supplier-side integration (webhook or API) of any kind; order status is advanced exclusively by Admin via manual update (see PP-002), a deliberate architecture decision that removed the pilot's single biggest schedule risk (the supplier's fulfillment-endpoint contract was unconfirmed) |
 | PP-002 | A submitted order's status is visible to the customer | Customer can view current order status (e.g., submitted / accepted / fulfilled) via polling-based refresh (target: status reflects backend state within 60 seconds of a change — **[DRAFT — confirm with PO]**) |
 | PP-003 | Basic authenticated access to the pilot ordering flow | Customer authenticates via username/password or a stubbed session (explicitly not full SSO/OIDC — that remains scoped to the parent PRD) |
 | PP-004 | Baseline security hygiene on the pilot workflow | TLS in transit for all requests; parameterized queries / input validation on order submission; basic audit log entry (who, what, when) for order creation and status changes |
