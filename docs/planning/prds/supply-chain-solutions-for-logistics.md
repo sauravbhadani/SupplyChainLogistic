@@ -4,9 +4,10 @@ source: https://docs.google.com/document/d/11YaNO_gASCfLaUZnuHKhVybWI2Cj3LBw1N70
 sourceType: google-docs
 importedAt: 2026-07-26
 revisedAt: 2026-07-26
-status: validated
+status: enriched
 linearInitiative: null
 validationReport: docs/planning/prds/supply-chain-solutions-for-logistics-validation.md
+enrichmentReport: docs/planning/prds/supply-chain-solutions-for-logistics-enrichment.md
 ---
 
 # Supply chain solutions for logistics
@@ -133,3 +134,29 @@ The Client has an existing digital assistant product intended to provide an intu
 - Enterprise Platform is maintained as-is (not replaced) during the Phase 1 mobile rewrite; platform cleanup work is scoped to Phase 2 per the milestones above.
 - Payment processing (e.g., PCI-DSS scope) is not confirmed as in-scope — flagged as an open question for PO.
 - Food-safety/traceability-specific regulatory requirements are not confirmed as in-scope — flagged as an open question for PO.
+
+## Technical Context
+
+> Added by `/PRDEnrich` (standard depth). Full analysis: [enrichment report](supply-chain-solutions-for-logistics-enrichment.md).
+
+**Codebase status: greenfield.** This repository contains only the Claude Workflow System scaffolding — no `src/`, no dependency manifest, no application code, and no test suite (confirmed by direct scan; `CLAUDE.md` itself states "no source code yet"). Every requirement below is net-new build, not an extension of existing code. There are no internal file:line references in this enrichment because none exist yet — this inverts the usual enrichment posture from "find reusable patterns" to "make first-time architecture decisions" for auth, data propagation, monitoring, and mobile.
+
+**Architecture notes:**
+- FR-001/FR-004 (stock, delivery, inventory visibility) hinge entirely on the three still-undefined latency thresholds — whether "near real-time" means push/streaming or a polling loop is an open architectural fork, not a detail.
+- FR-002 (Enterprise Platform order placement) and the Phase 1 mobile rewrite both depend on legacy systems (the current Enterprise Platform, the existing Xamarin app) whose code lives outside this repo and was not available for analysis — a discovery spike against the actual legacy sources is a prerequisite the PRD does not yet scope.
+- FR-003/FR-005 (data/BI) and the Phase 2 Tableau→PowerBI conversion require a net-new data pipeline; report-conversion volume and SAP Cloud's role (present in the suggested stack, unexplained in the PRD body) are unresolved.
+- FR-006 (monitoring) is an undecided build-vs-buy call (Azure Monitor/App Insights vs. custom tool).
+- SSO (OIDC/OAuth2) is a from-scratch IdP integration; Azure AD/Entra ID is the likely but unconfirmed choice given the Azure-centric stack.
+
+**Pattern guidance:** None available — no existing implementations to reuse or avoid. Suggested technology stack in the PRD is directional only ("or an alternate stack based on team experience"); IdP, SQL Server vs. PostgreSQL, and monitoring build-vs-buy should be made explicit before work breakdown.
+
+**Top risk flags** (full list with severities in the enrichment report):
+- **HIGH** — Greenfield build with no reference implementation anywhere in this repo; compounds every other risk.
+- **HIGH** — Three undefined latency thresholds (FR-001, FR-004, FR-006) plus the proposed p95 API target block committing to a data-layer architecture.
+- **HIGH** — Compliance scope open (PCI-DSS, food-traceability); if either applies, security/compliance effort grows by more than one T-shirt size.
+- **HIGH** — Phase 1 native mobile rewrite is a two-platform migration with an undiscovered feature-parity surface (legacy Xamarin source not in this repo).
+- **MEDIUM** — SSO/OIDC is a net-new IdP integration; input validation/session management are deferred with no draft position; Tableau→PowerBI scope is unbounded; concurrent Azure infra changes across Phase 1/2 create coordination risk; monitoring build-vs-buy is undecided.
+
+**Complexity estimate: Overall XL** (multi-quarter program across mobile, platform, data, and security domains). Per-component: Native mobile rewrite L–XL, Enterprise Platform/web M–L, real-time data layer L, data/BI pipeline M–L, monitoring M, security/compliance M–L (higher if PCI-DSS/food-traceability apply), Azure infra cleanup M, process items S. **Uncertainty: HIGH** — driven by the six outstanding PO sign-off items (baseline metrics, persona priority, three latency thresholds, compliance scope, phase sequencing, input-validation/session-mgmt timing) and by the inability to inspect the legacy Enterprise Platform/Xamarin/Tableau code that several requirements depend on.
+
+See the [enrichment report](supply-chain-solutions-for-logistics-enrichment.md) for the full dependency map, per-requirement technical notes, and stated assumptions behind the estimate.
