@@ -214,6 +214,27 @@
           "enum": ["APPROVED", "NEEDS_DECISIONS", "REJECTED"],
           "description": "Whether the architecture design is approved for implementation"
         },
+        "hldDiagram": {
+          "type": "string",
+          "description": "Mermaid source for the system-level HLD diagram. Blocked components are present in the diagram, labeled TBD, not omitted."
+        },
+        "lldModules": {
+          "type": "array",
+          "description": "Per-module low-level design status, produced by architecture-review.generateLLD",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "groundedIn": {
+                "type": ["string", "null"],
+                "description": "Source path this module's diagrams were derived from, or null if proposed pre-implementation"
+              },
+              "hasClassDiagram": { "type": "boolean" },
+              "hasSequenceDiagram": { "type": "boolean" }
+            }
+          }
+        },
         "adrs": {
           "type": "array",
           "description": "Architecture Decision Records",

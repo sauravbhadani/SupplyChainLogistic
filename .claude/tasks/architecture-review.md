@@ -19,9 +19,10 @@ Produce an architecture design and ADRs for a feasibility-assessed PRD.
 3. Identify architecture-relevant decisions still open (from enrichment risk flags and feasibility prerequisites — e.g., auth mechanism, integration boundaries, data model shape)
 4. For any decision supplied via the `decisions` input, incorporate it directly; for any decision still open, generate an explicit question rather than guessing
 5. Produce a component/data-model/API design, mapping each element to the requirement IDs it satisfies
-6. Produce an ADR for each decision with more than one viable option (context, decision, alternatives considered, consequences)
-7. Cross-check the design against the PRD's NFRs and the feasibility report's flagged risks
-8. Score `approvalStatus`: `APPROVED` only if no HIGH/Critical severity item is unresolved
+6. Produce a single system-level HLD as a Mermaid diagram (major components, external systems, data flow) — components blocked by an open decision are drawn and labeled `TBD`, not omitted
+7. Produce an ADR for each decision with more than one viable option (context, decision, alternatives considered, consequences)
+8. Cross-check the design against the PRD's NFRs and the feasibility report's flagged risks
+9. Score `approvalStatus`: `APPROVED` only if no HIGH/Critical severity item is unresolved
 
 **Inputs:**
 - `prd`: PRD slug or ID (string)
@@ -37,6 +38,7 @@ Produce an architecture design and ADRs for a feasibility-assessed PRD.
     "dataModel": ["ApplicationUser", "Supplier", "Order", "AuditLog"],
     "apiSurface": ["POST /api/orders", "GET /api/orders", "PATCH /api/admin/orders/{id}/status"]
   },
+  "hldDiagram": "flowchart TB\n    Customer -->|places order| API[OrderPilot API]\n    API --> DB[(SQL Server)]\n    Admin -->|manual status update| API",
   "adrs": [
     {
       "id": "ADR-001",
@@ -90,6 +92,63 @@ Compare already-implemented code against a previously approved architecture desi
 }
 ```
 
+### `generateLLD`
+
+Produce per-module low-level diagrams (class diagram + primary-flow sequence diagram) for a PRD's design or its actual implementation.
+
+**Steps:**
+1. Load the PRD and, if it exists, its approved architecture doc for the component list; otherwise use the `architectureDesign.components` from a `design` run
+2. Determine module scope: use `modules` input if supplied, otherwise every component in the design/implementation
+3. For each module:
+   a. If `implementationPaths` is supplied or the PRD status indicates an implementation exists, read the actual source file(s) for that module — do not infer behavior from the module's name alone
+   b. Produce a Mermaid `classDiagram` for the module's data/domain shape (entities, key fields, relationships it owns or depends on)
+   c. If the module has a primary flow (e.g., a controller action, a service method invoked by an API call), produce a Mermaid `sequenceDiagram` tracing that flow across the modules it touches
+   d. If no source exists and no design description covers the module, skip it — do not invent structure
+4. Label each module's diagrams `grounded in <path>` (implemented) or `proposed, pre-implementation` (design-only)
+
+**Inputs:**
+- `prd`: PRD slug or ID (string)
+- `modules`: Module/component names to generate LLDs for (array of strings, optional — defaults to all)
+- `implementationPaths`: Source paths to read for grounding (array of strings, optional)
+
+**Outputs:**
+```json
+{
+  "prd": "order-placement-pilot",
+  "modules": [
+    {
+      "name": "OrderService",
+      "groundedIn": "src/OrderPilot.Api/Services/OrderService.cs",
+      "classDiagram": "classDiagram\n    class Order {\n        +Guid Id\n        +Guid CustomerId\n        +OrderStatus Status\n    }",
+      "sequenceDiagram": "sequenceDiagram\n    Customer->>OrdersController: POST /api/orders\n    OrdersController->>OrderService: CreateOrderAsync\n    OrderService->>DB: SaveChangesAsync"
+    }
+  ],
+  "skipped": [
+    { "name": "MonitoringService", "reason": "No source exists and no design description covers this module" }
+  ]
+}
+```
+
+### `generateHLD`
+
+Standalone HLD refresh, for when the architecture design hasn't changed but the diagram needs regenerating (e.g., after a `conformance` run finds new components) without re-running the full `design` operation.
+
+**Steps:**
+1. Load the PRD's current architecture design (from a prior `design` run) or, if none exists, its enrichment/feasibility data
+2. Identify major components, external systems, and data flows
+3. Produce a single Mermaid diagram; label any component blocked by an open decision as `TBD`
+
+**Inputs:**
+- `prd`: PRD slug or ID (string)
+
+**Outputs:**
+```json
+{
+  "prd": "supply-chain-solutions-for-logistics",
+  "hldDiagram": "flowchart TB\n    subgraph Client\n      Web[Web App]\n      Mobile[Native Mobile - TBD]\n    end\n    Web --> EnterprisePlatform\n    Mobile --> EnterprisePlatform\n    EnterprisePlatform --> DataLayer[(Data Layer - TBD engine)]\n    EnterprisePlatform --> Monitoring[Monitoring - TBD build/buy]"
+}
+```
+
 ## Configuration
 
 Approval thresholds:
@@ -105,9 +164,11 @@ Approval thresholds:
 | No enrichment/feasibility data available | Proceed with a lighter design pass, flag reduced confidence in the output |
 | Architecture decision genuinely unknown and not supplied | Add to `openQuestions`, do not guess |
 | No prior approved design exists (conformance mode) | Fall back to diffing directly against the PRD's acceptance criteria |
+| Module has no source and no design description (generateLLD) | Skip it, record in `skipped` with a reason — do not invent structure |
+| No architecture design or enrichment/feasibility data available (generateHLD) | Warn and suggest running `design` first |
 
 ## Dependencies
 
 - **technical-feasibility**: For feasibility data and team/timeline constraints
 - **prd-enrichment**: For codebase patterns and risk flags
-- **context-loader**: For scanning the actual codebase in conformance mode
+- **context-loader**: For scanning the actual codebase in `conformance` and `generateLLD` modes
