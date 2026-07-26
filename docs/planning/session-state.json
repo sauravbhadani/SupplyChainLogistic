@@ -8,13 +8,12 @@
     "status": "active"
   },
   "work": {
-    "currentTask": "PRD intake: order-placement-pilot",
-    "inProgress": [
-      "docs/planning/prds/order-placement-pilot.md — imported, pending /PRDValidate",
-      "PRDSequence blocked until order-placement-pilot has feasibility data (need 2+ initiatives)"
-    ],
+    "currentTask": "PRDSequence: supply-chain-solutions-for-logistics + order-placement-pilot",
+    "inProgress": [],
     "completed": [
-      "supply-chain-solutions-for-logistics: intake → validated (81%) → enriched (XL) → feasibility-assessed (REJECT full scope for 2 BE/1 FE/1 QA/4wk)"
+      "supply-chain-solutions-for-logistics: intake → validated (81%) → enriched (XL) → feasibility-assessed (REJECT full scope for 2 BE/1 FE/1 QA/4wk)",
+      "order-placement-pilot: authored → validated (77%) → enriched (S/M) → feasibility-assessed (PROCEED conditional, 63/80 pd)",
+      "/PRDSequence (balanced weights) run across both initiatives — recommended order: order-placement-pilot (score 84) first, then supply-chain-solutions-for-logistics full scope (score 24, gated on 6 PO decisions + discovery spike + staffing to ~10-14 people). Report: docs/planning/sequence-report-2026-07-26.md"
     ],
     "blocked": []
   },
@@ -30,7 +29,8 @@
   "notes": [
     "2026-07-26: Imported PRD from Google Docs (https://docs.google.com/document/d/11YaNO_gASCfLaUZnuHKhVybWI2Cj3LBw1N70GOLYKeA) to docs/planning/prds/supply-chain-solutions-for-logistics.md. Document reads as a client RFP/SOW rather than a standard PRD — no explicit target-user or acceptance-criteria sections; flag for /PRDValidate.",
     "2026-07-26: /PRDFeasibility on supply-chain-solutions-for-logistics (team=2 BE/1 FE/1 QA, timeline=4 weeks) returned REJECT for full scope — ~6-10x capacity gap, no mobile/data/DevOps specialists, legacy systems undiscovered. Report proposed a narrow FR-002 pilot as the one realistically shippable slice in 4 weeks.",
-    "2026-07-26: Authored docs/planning/prds/order-placement-pilot.md as a derived, narrower PRD (single order type, single supplier, basic auth, polling, baseline security) per the feasibility report's recommendation, to unblock /PRDSequence which needs 2+ initiatives with feasibility data."
+    "2026-07-26: Authored docs/planning/prds/order-placement-pilot.md as a derived, narrower PRD (single order type, single supplier, basic auth, polling, baseline security) per the feasibility report's recommendation, to unblock /PRDSequence which needs 2+ initiatives with feasibility data.",
+    "2026-07-26: Ran /PRDSequence (weights=balanced) across supply-chain-solutions-for-logistics and order-placement-pilot. Treated as a non-peer relationship (pilot is a carved subset of the parent's FR-002, same 4-person team) rather than forcing a generic peer-sequencing template. Recommended: order-placement-pilot now (score 84); parent full scope gated (score 24) pending 6 PO decisions, legacy discovery spike, and staffing to ~10-14 people. Report: docs/planning/sequence-report-2026-07-26.md."
   ],
   "mcpConnections": {
     "taskManagement": false,
