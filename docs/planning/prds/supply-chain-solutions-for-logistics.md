@@ -9,6 +9,7 @@ linearInitiative: null
 validationReport: docs/planning/prds/supply-chain-solutions-for-logistics-validation.md
 enrichmentReport: docs/planning/prds/supply-chain-solutions-for-logistics-enrichment.md
 feasibilityReport: docs/planning/prds/supply-chain-solutions-for-logistics-feasibility.md
+architectureReport: docs/planning/prds/supply-chain-solutions-for-logistics-architecture.md
 ---
 
 # Supply chain solutions for logistics
