@@ -11,17 +11,29 @@ SupplyChainLogistic - Supply chain & logistics management system
 ```
 SupplyChainLogistic/
 ├── .claude/            # Claude Workflow System (commands, agents, tasks)
-├── .github/workflows/  # CI (code review, security review)
+├── .github/workflows/  # CI (code review, security review, .NET build+test)
+├── src/
+│   └── OrderPilot.Api/         # ASP.NET Core Web API — order-placement-pilot PRD
+│       ├── Controllers/        # Auth, Orders (customer), Admin/ (orders, customers, suppliers, audit-logs)
+│       ├── Domain/Entities/    # ApplicationUser, Supplier, Order, OrderStatus, AuditLog
+│       ├── Dtos/                # Request/response DTOs (Auth, Orders, Admin)
+│       ├── Data/                # ApplicationDbContext, Migrations/, Seed/DbSeeder
+│       ├── Services/            # OrderService, AdminConfigService, AuditService, TokenService
+│       ├── Authorization/        # OrderOwnerOrAdmin policy (customer-scoped order access)
+│       └── Extensions/           # DI wiring (Identity, JWT auth, authorization, services)
+├── tests/
+│   ├── OrderPilot.Api.UnitTests/         # xUnit + EF Core InMemory — service/handler logic
+│   └── OrderPilot.Api.IntegrationTests/  # xUnit + WebApplicationFactory + SQLite — real HTTP/relational behavior
 ├── docs/
-│   ├── planning/       # Session plans and current state
+│   ├── planning/
+│   │   ├── prds/       # Imported/derived PRDs and their validation/enrichment/feasibility reports
+│   │   └── ...          # Session plans and current state
 │   ├── specs/          # Technical specifications
 │   └── reports/        # Generated reports
 └── knowledge/
-    ├── prd/            # Product requirements documents
+    ├── prd/            # Product requirements documents (templates)
     └── architecture/   # Architecture documentation
 ```
-
-<!-- This is a fresh repository — update this section once source code layout exists -->
 
 ## Development Guidelines
 
@@ -135,36 +147,49 @@ All Linear issues MUST use this description format. Pass descriptions as multi-l
 ## Environment Setup
 
 ### Prerequisites
-<!-- Customize for project requirements -->
-- TBD — no source code or dependency manifest exists yet
+- .NET 8 SDK
+- SQL Server / SQL Server Express LocalDB (dev) or Azure SQL (prod) for `OrderPilot.Api`
+- `dotnet tool install --global dotnet-ef` (for migrations)
 
 ### Installation
 ```bash
-# TBD once a language/framework is chosen
+dotnet restore
 ```
 
 ### Development Server
 ```bash
-# TBD once a language/framework is chosen
+# ASPNETCORE_ENVIRONMENT=Development picks up src/OrderPilot.Api/appsettings.Development.json
+# (LocalDB connection string, dev-only JWT key, seeded dev admin — dev-admin@orderpilot.local)
+ASPNETCORE_ENVIRONMENT=Development dotnet run --project src/OrderPilot.Api
+# Swagger UI at https://localhost:{port}/swagger
 ```
 
 ### Running Tests
 ```bash
-# TBD once a language/framework is chosen
+dotnet test
 ```
 
 ### Building
 ```bash
-# TBD once a language/framework is chosen
+dotnet build
+```
+
+### Database Migrations
+```bash
+dotnet ef migrations add <Name> --project src/OrderPilot.Api --startup-project src/OrderPilot.Api
+dotnet ef database update --project src/OrderPilot.Api --startup-project src/OrderPilot.Api
 ```
 
 ## Key Directories
 
 | Directory | Purpose |
 |-----------|---------|
+| `/src/OrderPilot.Api/` | The order-placement-pilot ASP.NET Core Web API |
+| `/tests/` | Unit and integration test projects |
 | `/docs/planning/` | Session plans and current state |
+| `/docs/planning/prds/` | Imported/derived PRDs and their validation/enrichment/feasibility reports |
 | `/docs/specs/` | Technical specifications |
-| `/knowledge/prd/` | Product requirements documents |
+| `/knowledge/prd/` | Product requirements documents (templates) |
 | `/knowledge/architecture/` | Architecture documentation |
 
 ## Important Conventions
@@ -196,4 +221,6 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 ## Additional Context
 
 <!-- Add project-specific context, external integrations, or special considerations -->
-This repository was just initialized with the Claude Workflow System (base variant) and pushed to `https://github.com/sauravbhadani/SupplyChainLogistic` (private). It has no source code yet. Run `/SetupProjectMeta` to configure Linear/Coda once ready.
+This repository was initialized with the Claude Workflow System (base variant) and pushed to `https://github.com/sauravbhadani/SupplyChainLogistic` (private). Run `/SetupProjectMeta` to configure Linear/Coda once ready.
+
+The first code in the repo is `src/OrderPilot.Api` — implementation of the `order-placement-pilot` PRD (`docs/planning/prds/order-placement-pilot.md`), a deliberately narrow slice of the larger `supply-chain-solutions-for-logistics` initiative (see `docs/planning/prds/supply-chain-solutions-for-logistics.md` and its enrichment/feasibility reports for why: the full scope was rejected as infeasible for a 2 BE/1 FE/1 QA team in 4 weeks). Key architecture decisions for this pilot: real username/password auth via ASP.NET Core Identity + JWT (not SSO — that's parent-PRD scope), order status is updated manually by an Admin (no supplier-side integration at all), and customer-scoped authorization is enforced via a resource-based `OrderOwnerOrAdmin` policy — see `docs/planning/sequence-report-2026-07-26.md` for how this pilot relates to the parent initiative.

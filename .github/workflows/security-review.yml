@@ -18,6 +18,8 @@ on:
       - '**/*.py'
       - '**/*.go'
       - '**/*.rs'
+      - '**/*.cs'
+      - '**/*.csproj'
       - '**/package.json'
       - '**/package-lock.json'
       - '**/yarn.lock'
@@ -169,6 +171,8 @@ jobs:
             **/*.py
             **/*.go
             **/*.rs
+            **/*.cs
+            **/*.csproj
             **/package.json
             **/.env*
             **/Dockerfile*

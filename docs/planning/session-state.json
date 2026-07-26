@@ -8,12 +8,15 @@
     "status": "active"
   },
   "work": {
-    "currentTask": "PRDSequence: supply-chain-solutions-for-logistics + order-placement-pilot",
-    "inProgress": [],
+    "currentTask": "ImplementFeature order-placement-pilot: initial build complete",
+    "inProgress": [
+      "Week 1-4 build per plan (C:\\Users\\saura\\.claude\\plans\\reactive-doodling-toast.md): foundation/auth/authorization/core endpoints/admin workflows all implemented; remaining: FE client (out of this backend repo's scope), staging deployment, UAT with real pilot cohort"
+    ],
     "completed": [
       "supply-chain-solutions-for-logistics: intake → validated (81%) → enriched (XL) → feasibility-assessed (REJECT full scope for 2 BE/1 FE/1 QA/4wk)",
       "order-placement-pilot: authored → validated (77%) → enriched (S/M) → feasibility-assessed (PROCEED conditional, 63/80 pd)",
-      "/PRDSequence (balanced weights) run across both initiatives — recommended order: order-placement-pilot (score 84) first, then supply-chain-solutions-for-logistics full scope (score 24, gated on 6 PO decisions + discovery spike + staffing to ~10-14 people). Report: docs/planning/sequence-report-2026-07-26.md"
+      "/PRDSequence (balanced weights) run across both initiatives — recommended order: order-placement-pilot (score 84) first, then supply-chain-solutions-for-logistics full scope (score 24, gated on 6 PO decisions + discovery spike + staffing to ~10-14 people). Report: docs/planning/sequence-report-2026-07-26.md",
+      "/ImplementFeature order-placement-pilot: scaffolded src/OrderPilot.Api (ASP.NET Core 8 Web API, EF Core + SQL Server, ASP.NET Identity + JWT bearer auth), implemented PP-001..PP-005 (order create/list/detail, admin manual status update, admin customer/supplier config, audit logging), customer-scoped OrderOwnerOrAdmin authorization policy, InitialCreate migration applied to LocalDB, 16 unit tests (EF InMemory) + 15 integration tests (WebApplicationFactory + SQLite, incl. the CRITICAL customer-isolation test) all passing, dotnet-ci.yml added, CLAUDE.md updated"
     ],
     "blocked": []
   },
