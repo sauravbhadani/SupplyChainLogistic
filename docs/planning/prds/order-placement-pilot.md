@@ -5,11 +5,12 @@ sourceType: internal-derived
 parentInitiative: supply-chain-solutions-for-logistics
 importedAt: 2026-07-26
 revisedAt: 2026-07-26
-status: feasibility-assessed
+status: architecture-approved
 linearInitiative: null
 validationReport: docs/planning/prds/order-placement-pilot-validation.md
 enrichmentReport: docs/planning/prds/order-placement-pilot-enrichment.md
 feasibilityReport: docs/planning/prds/order-placement-pilot-feasibility.md
+architectureReport: docs/planning/prds/order-placement-pilot-architecture.md
 ---
 
 # Order Placement Pilot (FR-002 narrow slice)
