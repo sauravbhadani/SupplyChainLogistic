@@ -117,7 +117,8 @@ Conditions:
 - `/PRDEnrich` - Enrich PRD before feasibility assessment
 - `/PRDValidate` - Validate PRD completeness
 - `/PRDSequence` - Sequence initiatives using feasibility data
-- `/ImplementFeature` - Implement after feasibility approval
+- `/ArchitectureReview` - Recommended next step: produce a reviewed architecture design before implementation
+- `/ImplementFeature` - Implement after feasibility approval (and ideally after `/ArchitectureReview`)
 
 ## Tasks Invoked
 

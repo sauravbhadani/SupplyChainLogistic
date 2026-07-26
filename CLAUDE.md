@@ -77,6 +77,8 @@ This project uses the Claude Workflow System for development operations.
 - `/EndSession` - Close session and optionally trigger CI
 - `/SessionStatus` - View current session state
 - `/SetupProjectMeta` - Reconfigure Linear, Coda, and GitHub integrations
+- `/PRDIntake`, `/PRDValidate`, `/PRDEnrich`, `/PRDFeasibility` - PRD intake-through-feasibility pipeline
+- `/ArchitectureReview` - Pre-implementation architecture design/review gate (run after `/PRDFeasibility`, before `/ImplementFeature`); `mode="conformance"` checks a built feature against its approved design
 - `/ImplementFeature` - Start feature implementation workflow
 - `/FixBug` - Start bug investigation workflow
 - `/ReviewCode` - Request code review

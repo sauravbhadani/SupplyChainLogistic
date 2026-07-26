@@ -23,7 +23,7 @@ Orchestrates the complete feature implementation process: discovers requirements
 ## Execution
 
 1. Invoke `feature-workflow` task with action: `implement`
-   - Discovery: Finds requirements from PRDs, documentation, task management
+   - Discovery: Finds requirements from PRDs, documentation, task management. If the PRD has an approved architecture doc (`{prd}-architecture.md`, status `architecture-approved`), load it and use its component/data-model/API design and ADRs directly instead of re-deriving architecture ad hoc.
    - Specification: Generates or loads feature spec
    - Approval: Presents plan for confirmation
    - Implementation: Routes to agents (schema-designer, code-writer)
@@ -39,6 +39,7 @@ Orchestrates the complete feature implementation process: discovers requirements
 
 - Requirements exist in PRD, documentation, or task management
 - Session active (recommended)
+- For non-trivial features: run `/ArchitectureReview` first so architecture decisions are made deliberately and traced to requirements, rather than decided ad hoc mid-implementation
 
 ## Output Files
 
@@ -53,6 +54,7 @@ Orchestrates the complete feature implementation process: discovers requirements
 
 ## Related
 
+- `/ArchitectureReview` - Run before this command for non-trivial features; provides the design this command should implement against
 - `/FixBug` - For bug fixes
 - `/RefactorCode` - For refactoring
 - `/ReviewCode` - Review implementation

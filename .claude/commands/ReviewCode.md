@@ -79,6 +79,7 @@ Lines Analyzed: 450
 - `/FixBug` - Fix identified issues
 - `/GenerateTests` - Add test coverage
 - `/RunSecurityAudit` - Deep security analysis
+- `/ArchitectureReview mode="conformance"` - Check whether the implementation has drifted from its approved architecture design or PRD acceptance criteria (complements this command's code-quality focus with a design-level check)
 
 ## Tasks Invoked
 

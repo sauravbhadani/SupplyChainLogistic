@@ -205,6 +205,71 @@
         }
       }
     },
+    "architecture": {
+      "type": "object",
+      "description": "Pre-implementation architecture review results",
+      "properties": {
+        "approvalStatus": {
+          "type": "string",
+          "enum": ["APPROVED", "NEEDS_DECISIONS", "REJECTED"],
+          "description": "Whether the architecture design is approved for implementation"
+        },
+        "adrs": {
+          "type": "array",
+          "description": "Architecture Decision Records",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "decision"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "decision": { "type": "string" },
+              "alternativesConsidered": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "traceability": {
+          "type": "array",
+          "description": "Requirement-ID to design-element mapping",
+          "items": {
+            "type": "object",
+            "required": ["requirementId", "status"],
+            "properties": {
+              "requirementId": { "type": "string" },
+              "designElement": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["satisfied", "unsatisfied", "partial"]
+              }
+            }
+          }
+        },
+        "openQuestions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "driftFindings": {
+          "type": "array",
+          "description": "Conformance-check results comparing implementation against approved design",
+          "items": {
+            "type": "object",
+            "properties": {
+              "requirementId": { "type": "string" },
+              "expected": { "type": "string" },
+              "actual": { "type": "string" },
+              "recommendation": { "type": "string" }
+            }
+          }
+        },
+        "lastReviewed": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "breakdown": {
       "type": "object",
       "description": "Work breakdown results",
@@ -243,7 +308,7 @@
     },
     "status": {
       "type": "string",
-      "enum": ["draft", "validating", "validated", "enriching", "enriched", "feasibility", "ready", "breakdown", "in-cycle", "completed"],
+      "enum": ["draft", "validating", "validated", "enriching", "enriched", "feasibility", "architecture-review", "architecture-approved", "ready", "breakdown", "in-cycle", "completed"],
       "description": "Current PRD pipeline status"
     },
     "createdAt": {
