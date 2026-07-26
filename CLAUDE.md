@@ -83,7 +83,7 @@ This project is configured with the following integrations:
 |---------|---------------|
 | **Linear** | Not configured — run `/SetupProjectMeta` |
 | **Coda** | Not configured — run `/SetupProjectMeta` |
-| **GitHub** | Not configured — not yet a git repository |
+| **GitHub** | Repository: `sauravbhadani/SupplyChainLogistic` |
 
 To reconfigure integrations, run `/SetupProjectMeta`.
 
@@ -196,4 +196,4 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 ## Additional Context
 
 <!-- Add project-specific context, external integrations, or special considerations -->
-This repository was just initialized with the Claude Workflow System (base variant). It is not yet a git repository and has no source code. Run `git init` before using GitHub-dependent commands, and run `/SetupProjectMeta` to configure Linear/Coda once ready.
+This repository was just initialized with the Claude Workflow System (base variant) and pushed to `https://github.com/sauravbhadani/SupplyChainLogistic` (private). It has no source code yet. Run `/SetupProjectMeta` to configure Linear/Coda once ready.
