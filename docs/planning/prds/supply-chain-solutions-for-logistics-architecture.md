@@ -10,6 +10,8 @@ inputs:
   feasibilityReport: docs/planning/prds/supply-chain-solutions-for-logistics-feasibility.md
   sequenceReport: docs/planning/sequence-report-2026-07-26.md
 relatedPRD: order-placement-pilot (carved subset of FR-002; see order-placement-pilot-architecture.md — that review is APPROVED for the narrow pilot slice, not for this PRD's full scope)
+hldAddedAt: 2026-07-26
+hldMode: generateHLD (standalone HLD refresh per architecture-review.generateHLD; no change to approvalStatus or the design/ADRs/open questions above)
 ---
 
 # Architecture Review: supply-chain-solutions-for-logistics
@@ -20,6 +22,66 @@ Mode: design
 ## Approval Status: NEEDS_DECISIONS
 
 No implementation exists for this PRD (confirmed greenfield: no `src/`, no dependency manifest, no application code — per the enrichment report's codebase scan). The `/PRDFeasibility` verdict was **REJECT** for the stated team (2 BE, 1 FE, 1 QA) and 4-week timeline, and the validation and enrichment reports both list six architecture-relevant Product Owner decisions as explicitly unresolved. Six of the open items below are HIGH severity per this agent's own severity rubric (ambiguous decisions with materially different architectural outcomes depending on the answer) and one — input validation/session management — is a genuine specification gap, not a drafted-but-pending item. Per the constraint "never approve a design with an unresolved HIGH or Critical severity item," this cannot be marked `APPROVED`. It is also not `REJECTED`: nothing here is technically infeasible, and every blocked area below has at least one viable design path once its blocking decision lands — there is no acceptance criterion this design is structurally unable to satisfy. `NEEDS_DECISIONS` is the accurate, non-forced outcome.
+
+## High-Level Design (HLD)
+
+Standalone system-level HLD refresh (`architecture-review.generateHLD`), regenerated from the design and ADRs above plus the enrichment/feasibility dependency maps — no new design decisions are made here, only the diagram. It groups components into the PRD's own two build phases (Phase 1: mobile-first; Phase 2: Enterprise Platform cleanup + Data/PowerBI) and shows every client, platform, data/BI, monitoring, and external-system box named in the architecture design, the enrichment report's dependency map, and the feasibility report's 10-item integration touchpoints table. Seven boxes are labeled `TBD` because their internals are blocked by one of the 14 open questions above and this review does not guess at them: the **Stock/Delivery Read Model**'s transport (poll vs. push — OQ1), the **Enterprise Platform**'s integration mechanism (OQ11), the **Data Pipeline**'s storage engine (OQ8), **SAP Cloud**'s role (OQ9), the **Monitoring/Observability** build-vs-buy call (OQ10), the **OIDC/OAuth2 IdP**'s actual provider (OQ7), and the **Supplier Fulfillment Systems**' per-supplier contracts (OQ12).
+
+```mermaid
+flowchart TB
+    subgraph P1["Phase 1 - Mobile First"]
+        subgraph Clients["Client Layer"]
+            WebApp["Web App (responsive)"]
+            iOSApp["Native iOS App"]
+            AndroidApp["Native Android App"]
+            TAU["Transport Admin UI (TAU) - .NET 6.0 upgrade"]
+        end
+        XamarinLegacy["Legacy Xamarin App (existing - being replaced)"]
+        ReadModel["Stock/Delivery Read Model API - TBD: poll vs push (OQ1)"]
+    end
+
+    subgraph P2["Phase 2 - Enterprise Platform Cleanup + Data/PowerBI"]
+        EP["Enterprise Platform (existing - maintained, not replaced) - integration mechanism TBD (OQ11)"]
+        subgraph DataBI["Data / BI Layer"]
+            Pipeline["Data Pipeline: Ingestion -> Warehouse -> Transformation - DB engine TBD (OQ8)"]
+            PowerBI["PowerBI (target BI tool)"]
+            Tableau["Tableau (existing - migrating from)"]
+        end
+        AzureInfra["Azure Infra: Key Vault, App Service Plans, DevOps - Phase 2 cleanup"]
+    end
+
+    Monitoring["Monitoring / Observability - build-vs-buy TBD (OQ10)"]
+    IdP["OIDC/OAuth2 IdP - provider TBD (OQ7)"]
+    PushSvc["APNs / FCM Push Notifications (via new Azure APIM)"]
+    Suppliers["Supplier Fulfillment Systems - per-supplier contracts TBD (OQ12)"]
+    SAP["SAP Cloud - role TBD (OQ9)"]
+
+    WebApp --> ReadModel
+    iOSApp --> ReadModel
+    AndroidApp --> ReadModel
+    XamarinLegacy -.->|feature parity discovery, then replaced by| iOSApp
+    XamarinLegacy -.->|feature parity discovery, then replaced by| AndroidApp
+    ReadModel --> EP
+    TAU --> EP
+    EP --> Suppliers
+    EP -.-> SAP
+    EP --> Pipeline
+    SAP -.-> Pipeline
+    Pipeline --> PowerBI
+    Pipeline -.->|report conversion from| Tableau
+    iOSApp --> PushSvc
+    AndroidApp --> PushSvc
+    WebApp --> IdP
+    iOSApp --> IdP
+    AndroidApp --> IdP
+    EP --> IdP
+    EP --> Monitoring
+    ReadModel --> Monitoring
+    Pipeline --> Monitoring
+    AzureInfra --> EP
+    AzureInfra --> ReadModel
+    AzureInfra --> PushSvc
+```
 
 ## Architecture Design
 
