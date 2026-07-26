@@ -5,12 +5,14 @@
     "id": "2026-07-26-general",
     "startedAt": "2026-07-26T00:00:00Z",
     "lastActivity": "2026-07-26T00:00:00Z",
-    "status": "active"
+    "status": "ended",
+    "endedAt": "2026-07-26T00:00:00Z"
   },
   "work": {
-    "currentTask": "ImplementFeature order-placement-pilot: initial build complete",
+    "currentTask": null,
     "inProgress": [
-      "Week 1-4 build per plan (C:\\Users\\saura\\.claude\\plans\\reactive-doodling-toast.md): foundation/auth/authorization/core endpoints/admin workflows all implemented; remaining: FE client (out of this backend repo's scope), staging deployment, UAT with real pilot cohort"
+      "order-placement-pilot: FE client, staging deployment, and UAT with real pilot cohort still outstanding (Week 3-4 per C:\\Users\\saura\\.claude\\plans\\reactive-doodling-toast.md)",
+      "supply-chain-solutions-for-logistics: gated on 6 open PO decisions, legacy-system discovery spike, and staffing to ~10-14 people"
     ],
     "completed": [
       "supply-chain-solutions-for-logistics: intake → validated (81%) → enriched (XL) → feasibility-assessed (REJECT full scope for 2 BE/1 FE/1 QA/4wk)",
