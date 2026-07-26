@@ -8,9 +8,14 @@
     "status": "active"
   },
   "work": {
-    "currentTask": "PRD intake: supply-chain-solutions-for-logistics",
-    "inProgress": ["docs/planning/prds/supply-chain-solutions-for-logistics.md — imported, pending /PRDValidate"],
-    "completed": [],
+    "currentTask": "PRD intake: order-placement-pilot",
+    "inProgress": [
+      "docs/planning/prds/order-placement-pilot.md — imported, pending /PRDValidate",
+      "PRDSequence blocked until order-placement-pilot has feasibility data (need 2+ initiatives)"
+    ],
+    "completed": [
+      "supply-chain-solutions-for-logistics: intake → validated (81%) → enriched (XL) → feasibility-assessed (REJECT full scope for 2 BE/1 FE/1 QA/4wk)"
+    ],
     "blocked": []
   },
   "git": {
@@ -23,7 +28,9 @@
   ],
   "decisions": [],
   "notes": [
-    "2026-07-26: Imported PRD from Google Docs (https://docs.google.com/document/d/11YaNO_gASCfLaUZnuHKhVybWI2Cj3LBw1N70GOLYKeA) to docs/planning/prds/supply-chain-solutions-for-logistics.md. Document reads as a client RFP/SOW rather than a standard PRD — no explicit target-user or acceptance-criteria sections; flag for /PRDValidate."
+    "2026-07-26: Imported PRD from Google Docs (https://docs.google.com/document/d/11YaNO_gASCfLaUZnuHKhVybWI2Cj3LBw1N70GOLYKeA) to docs/planning/prds/supply-chain-solutions-for-logistics.md. Document reads as a client RFP/SOW rather than a standard PRD — no explicit target-user or acceptance-criteria sections; flag for /PRDValidate.",
+    "2026-07-26: /PRDFeasibility on supply-chain-solutions-for-logistics (team=2 BE/1 FE/1 QA, timeline=4 weeks) returned REJECT for full scope — ~6-10x capacity gap, no mobile/data/DevOps specialists, legacy systems undiscovered. Report proposed a narrow FR-002 pilot as the one realistically shippable slice in 4 weeks.",
+    "2026-07-26: Authored docs/planning/prds/order-placement-pilot.md as a derived, narrower PRD (single order type, single supplier, basic auth, polling, baseline security) per the feasibility report's recommendation, to unblock /PRDSequence which needs 2+ initiatives with feasibility data."
   ],
   "mcpConnections": {
     "taskManagement": false,
