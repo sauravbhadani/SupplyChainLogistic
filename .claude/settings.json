@@ -1,0 +1,81 @@
+{
+  "$schema": "./schema/settings.schema.json",
+  "version": "1.0.0",
+  "project": {
+    "name": "SupplyChainLogistic",
+    "type": "generic",
+    "variant": "base"
+  },
+  "projectMetadata": {
+    "linear": {
+      "teamId": null,
+      "teamName": null,
+      "projectId": null,
+      "projectName": null
+    },
+    "coda": {
+      "docId": null,
+      "docName": null,
+      "pageId": null,
+      "pageName": null
+    },
+    "github": {
+      "repo": null,
+      "owner": null,
+      "name": null
+    }
+  },
+  "workflow": {
+    "sessionManagement": {
+      "enabled": true,
+      "autoSave": true,
+      "saveInterval": 300
+    },
+    "ciIntegration": {
+      "enabled": true,
+      "codeReview": true,
+      "securityReview": true
+    },
+    "taskManagement": {
+      "provider": null,
+      "projectKey": null,
+      "autoSync": false
+    },
+    "documentation": {
+      "provider": null,
+      "autoSync": false
+    }
+  },
+  "agents": {
+    "defaultModel": "sonnet",
+    "enabled": [
+      "code-writer",
+      "reviewer",
+      "test-planner",
+      "doc-writer"
+    ]
+  },
+  "commands": {
+    "enabled": [
+      "StartSession",
+      "EndSession",
+      "SessionStatus",
+      "ImplementFeature",
+      "FixBug",
+      "ReviewCode",
+      "GenerateTests"
+    ]
+  },
+  "paths": {
+    "docs": "docs",
+    "knowledge": "knowledge",
+    "specs": "docs/specs",
+    "planning": "docs/planning",
+    "prd": "knowledge/prd",
+    "architecture": "knowledge/architecture"
+  },
+  "installation": {
+    "pluginVersion": "1.2.0",
+    "variant": "base"
+  }
+}
