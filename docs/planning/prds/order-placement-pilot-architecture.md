@@ -9,6 +9,14 @@ codeReviewed:
   - src/OrderPilot.Api (all Controllers, Services, Domain/Entities, Authorization, Program.cs, Extensions)
   - tests/OrderPilot.Api.UnitTests
   - tests/OrderPilot.Api.IntegrationTests
+hldAddedAt: 2026-07-26
+hldMode: generateHLD
+hldBackfillReason: >
+  Flagged as a doc-completeness gap by the v2 conformance check
+  (order-placement-pilot-architecture-conformance-2026-07-26-v2.md):
+  this document predated the HLD feature added to /ArchitectureReview,
+  so it had ADRs and traceability but no diagram, unlike the parent
+  PRD's architecture doc.
 ---
 
 # Architecture Review: order-placement-pilot
@@ -19,6 +27,40 @@ Mode: design
 ## Approval Status: APPROVED
 
 No unresolved HIGH or Critical-severity item remains. The two items the enrichment/feasibility reports flagged as HIGH pre-implementation (PP-003 auth mechanism, customer/admin authorization boundary) were both resolved by explicit user decisions during the original `/ImplementFeature` session and are now built, tested, and conformance-verified. The two items that remain open (unbuilt customer-facing web UI, PP-002's `[DRAFT]` 60-second latency target) are Medium/Low per the Risks section below — see that section for the reasoning, not assumed here.
+
+## High-Level Design (HLD)
+
+Standalone HLD backfill (`architecture-review.generateHLD`) — no new design decisions are made here, only the diagram, drawn from the Components/Data Model/API Surface sections and ADRs below. Unlike the parent PRD's HLD, no box here is labeled `TBD`: this pilot's architecture is fully decided and conformance-verified, so every box reflects a settled decision. Two absences are drawn explicitly rather than omitted, because each is itself a headline architecture decision, not an oversight: no Supplier system integration exists at all (ADR-003 — Admin manages status manually), and no web UI exists yet in this repository (tracked risk, not a design gap — see Risks below).
+
+```mermaid
+flowchart TB
+    Customer -->|"POST /api/auth/login"| AuthController
+    Customer -->|"POST/GET /api/orders..."| OrdersController
+    Admin -->|"POST /api/auth/login"| AuthController
+    Admin -->|"/api/admin/orders, /customers, /suppliers, /audit-logs"| AdminControllers["Admin*Controller (Orders, Customers, Suppliers, AuditLogs)"]
+
+    AuthController --> Identity["ASP.NET Core Identity + TokenService (JWT, HMAC-SHA256)"]
+    Identity --> DB
+
+    OrdersController --> OrderService
+    AdminControllers --> OrderService
+    AdminControllers --> AdminConfigService
+
+    OrderService -->|"stage + SaveChangesAsync (atomic)"| AuditService
+    AuditService --> DB[("SQL Server / Azure SQL - ApplicationUser, Supplier, Order, AuditLog")]
+    OrderService --> DB
+    AdminConfigService --> DB
+
+    OrdersController -.->|"GET /{id}: resource-based check"| AuthzHandler["OrderOwnerAuthorizationHandler (Policies.OrderOwnerOrAdmin) - ADR-004"]
+    AuthzHandler -.-> OrdersController
+
+    NoSupplier["Supplier Fulfillment System"]
+    OrderService -.->|"NO INTEGRATION - ADR-003: Admin-managed status only"| NoSupplier
+
+    NoUI["Web UI - not yet built (tracked Risk, not a design gap)"]
+    Customer -.->|"intended future client"| NoUI
+    NoUI -.-> OrdersController
+```
 
 ## Architecture Design
 
